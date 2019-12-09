@@ -1,1 +1,179 @@
-<!DOCTYPE html><html lang=en><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1"><link rel=icon href=/favicon.ico><title>house</title><link href=/css/app.d43c6814.css rel=preload as=style><link href=/js/app.63b2405c.js rel=preload as=script><link href=/js/chunk-vendors.1960d400.js rel=preload as=script><link href=/css/app.d43c6814.css rel=stylesheet></head><body><noscript><strong>We're sorry but house doesn't work properly without JavaScript enabled. Please enable it to continue.</strong></noscript><div id=app></div><script src=/js/chunk-vendors.1960d400.js></script><script src=/js/app.63b2405c.js></script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.bootcss.com/socket.io/2.3.0/socket.io.slim.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        #app{
+            width: 600px;
+            margin: 0 auto;
+            border-left: 1px solid #ccc;
+            border-right: 1px solid #ccc;
+            min-height: 100vh;
+            box-sizing: border-box;
+            padding: 20px;
+        }
+        .msgList{
+            display: flex;
+            list-style: none;
+            flex-wrap: wrap;
+            padding: 20px 0;
+        }
+        .msgList li {
+            width: 100%;
+            margin-bottom: 16px;
+        }
+        .user{
+            text-align: right;
+        }
+        .blue{
+            color: #409eff;
+        }
+        .green{
+            color: #67c23a;
+        }
+        .user .name{
+            color: #67c23a
+        }
+        .other .name{
+            color: #409eff;
+        }
+
+        button{
+            width: 200px;
+            height: 46px;
+            text-align: center;
+            line-height: 46px;
+            border: none;
+            background-color: #409eff;
+            color: white;
+        }
+        textarea{
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        .info{
+            font-size: 12px;
+        }
+
+        .content{
+            font-size: 15px;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="app">
+        <ul class="msgList">
+            <li :class="msg.name === userName ? 'user' : 'other'" :class v-for="(msg, index) in msgList" :key="index">
+                <p class="info">
+                    <span class="name">{{msg.name}}</span>
+                    <span>{{msg.time}}</span>
+                </p>
+                <p class="content">{{msg.content}}</p>
+            </li>
+        </ul>
+        <div style="margin-bottom: 20px; border-top: 1px solid #ccc; padding-top: 20px;">
+            <ul style="list-style: none;">
+                <li>在线列表</li>
+                <li @click="inputVal = on" style="margin-top: 10px; cursor: pointer;" :class="on === userName ? 'green' : 'blue'" v-for="on in online">
+                    ✪ {{on}}
+                </li>
+            </ul>
+            <p style="margin-top: 20px;">发送给: （不填就是发送给所有人）</p>
+            <input
+                style="width: 100%;line-height: 26px;height: 26px;padding-left: 10px;margin-top: 10px; box-sizing: border-box;"
+                type="text"
+                v-model="inputVal"
+                
+            />
+        </div>
+        <div style="margin-bottom: 20px;">
+            <p style="margin-bottom: 20px;">消息：</p>
+            <textarea
+                @keyup.enter="sendMessage"
+                name=""
+                cols="30" rows="10"
+                v-model="textVal"
+            ></textarea>
+        </div>
+        <button @click="sendMessage">消息发送</button>
+    </div>
+
+</body>
+</html>
+<script>
+    let vm = new Vue({
+        el: '#app',
+        data: () => ({
+            socket: null,
+            userName: null,
+            msgList: [],
+            textVal: '',
+            inputVal: '',
+            online: []
+        }),
+        mounted () {
+            this.createWebsocket()
+            let userName = prompt('输入你的昵称', '')
+            this.login(userName)
+        },
+        methods: {
+            createWebsocket() {
+                try {
+                    this.socket = io('http://swoole.wobu2.com', {transports: ['websocket']});
+                    this.init();
+                } catch (e) {
+                    console.log('websocket连接错误');
+                    console.log(e);
+                }
+            },
+
+            init() {
+                this.socket.on('msg', (data) => {
+                    
+                });
+                this.socket.on('siliao', (data) => {
+                    this.msgList.push({
+                        name: data.sendFrom,
+                        content: data.msg,
+                        time: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString()
+                    })
+                });
+                this.socket.on('online', (data) => {
+                    this.online = data
+                });
+            },
+
+            login(userName) {
+                let str = {"username": userName};
+                this.socket.emit('login', str);
+                this.userName = userName
+            },
+
+            sendMessage() {
+                let msg = this.textVal;
+                let sendTo = this.inputVal;
+                if (sendTo === '') {
+                    this.socket.emit('sendToAll', {"msg": msg})
+                } else {
+                    this.socket.emit('sendToUser', {"username": sendTo, "msg": msg})
+                }
+                this.msgList.push({
+                    name: this.userName,
+                    content: this.textVal,
+                    time: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString()
+                })
+                this.textVal = ""
+            }
+        }
+    })
+</script>
