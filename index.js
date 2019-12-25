@@ -8,8 +8,10 @@ function getQueryVariable(variable)
     }
     return(false);
 }
-const name = getQueryVariable('name')
-console.log(name)
+let name = getQueryVariable('name')
+if (name) name = decodeURI(name)
+
+
 document.querySelector('button').addEventListener('click', function () {
   document.querySelector('.mask').classList.add('hide');
   var player = document.getElementById('player');
