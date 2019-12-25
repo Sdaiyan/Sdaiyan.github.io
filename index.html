@@ -1,179 +1,130 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-    <script src="https://cdn.bootcss.com/socket.io/2.3.0/socket.io.slim.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
-    <style>
-        *{
-            margin: 0;
-            padding: 0;
-        }
-        #app{
-            width: 600px;
-            margin: 0 auto;
-            border-left: 1px solid #ccc;
-            border-right: 1px solid #ccc;
-            min-height: 100vh;
-            box-sizing: border-box;
-            padding: 20px;
-        }
-        .msgList{
-            display: flex;
-            list-style: none;
-            flex-wrap: wrap;
-            padding: 20px 0;
-        }
-        .msgList li {
-            width: 100%;
-            margin-bottom: 16px;
-        }
-        .user{
-            text-align: right;
-        }
-        .blue{
-            color: #409eff;
-        }
-        .green{
-            color: #67c23a;
-        }
-        .user .name{
-            color: #67c23a
-        }
-        .other .name{
-            color: #409eff;
-        }
+  <meta charset="UTF-8">
+  <title>祝你圣诞快乐</title>
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, minimal-ui">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        button{
-            width: 200px;
-            height: 46px;
-            text-align: center;
-            line-height: 46px;
-            border: none;
-            background-color: #409eff;
-            color: white;
-        }
-        textarea{
-            width: 100%;
-            padding: 10px;
-            box-sizing: border-box;
-        }
-        .info{
-            font-size: 12px;
-        }
+    body {
+      position: relative;
+    }
 
-        .content{
-            font-size: 15px;
-            margin-top: 4px;
-        }
-    </style>
+    h2,
+    .star {
+      visibility: hidden;
+    }
+
+    .mask {
+      z-index: 3;
+      display: flex;
+      width: 100vw;
+      height: 100vh;
+      position: absolute;
+      align-items: center;
+      justify-content: center;
+      background: #e65f5f;
+    }
+
+    button {
+      color: white;
+      font-size: 14px;
+      padding: 10px 20px;
+      border: 1px solid white;
+      background: transparent;
+      border-radius: 3px;
+    }
+
+    .hide {
+      display: none;
+    }
+
+    .preview {
+      height: 60vh;
+    }
+
+    .code-wrapper {
+      height: 40vh;
+      overflow: auto;
+      position: relative;
+      padding: 10px;
+    }
+
+
+    @keyframes blink {
+      from {
+        opacity: 1.0;
+      }
+
+      to {
+        opacity: 0.0;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="./prism.css">
+  <style id="styleTag"></style>
 </head>
+
 <body>
-
-    <div id="app">
-        <ul class="msgList">
-            <li :class="msg.name === userName ? 'user' : 'other'" :class v-for="(msg, index) in msgList" :key="index">
-                <p class="info">
-                    <span class="name">{{msg.name}}</span>
-                    <span>{{msg.time}}</span>
-                </p>
-                <p class="content">{{msg.content}}</p>
-            </li>
-        </ul>
-        <div style="margin-bottom: 20px; border-top: 1px solid #ccc; padding-top: 20px;">
-            <ul style="list-style: none;">
-                <li>在线列表</li>
-                <li @click="inputVal = on" style="margin-top: 10px; cursor: pointer;" :class="on === userName ? 'green' : 'blue'" v-for="on in online">
-                    ✪ {{on}}
-                </li>
-            </ul>
-            <p style="margin-top: 20px;">发送给: （不填就是发送给所有人）</p>
-            <input
-                style="width: 100%;line-height: 26px;height: 26px;padding-left: 10px;margin-top: 10px; box-sizing: border-box;"
-                type="text"
-                v-model="inputVal"
-                
-            />
+  <div class="mask"><button>请开始你的表演</button></div>
+  <div class="preview">
+    <h2>祝你圣诞快乐</h2>
+    <div class="santa">
+      <div class="hat">
+        <div class="hat-top">
+          <div class="ball"></div>
         </div>
-        <div style="margin-bottom: 20px;">
-            <p style="margin-bottom: 20px;">消息：</p>
-            <textarea
-                @keyup.enter="sendMessage"
-                name=""
-                cols="30" rows="10"
-                v-model="textVal"
-            ></textarea>
+        <div class="hat-side"></div>
+      </div>
+      <div class="head">
+        <div class="face">
+          <div class="eyes">
+            <div class="eye"></div>
+            <div class="eye"></div>
+          </div>
         </div>
-        <button @click="sendMessage">消息发送</button>
+        <div class="left-ear ear"></div>
+        <div class="right-ear ear"></div>
+        <div class="beard">
+          <div class="mouseAndNose">
+            <div class="nose"></div>
+            <div class="mouse">
+              <div class="mouseLeft"></div>
+              <div class="mouseRight"></div>
+            </div>
+          </div>
+          <div class="beard1"></div>
+          <div class="beard2"></div>
+          <div class="beard3"></div>
+          <div class="beard4"></div>
+        </div>
+      </div>
+      <div class="clothe">
+        <div class="left-hand"></div>
+        <div class="right-hand"></div>
+        <div class="line1 line"></div>
+        <div class="line2 line"></div>
+      </div>
     </div>
-
+    <span class="star star1">✨</span>
+    <span class="star star2">✨</span>
+    <span class="star star3">✨</span>
+    <span class="star star4">✨</span>
+    <span class="star star5">✨</span>
+    <span class="star star6">✨</span>
+  </div>
+  <div class="code-wrapper">
+    <pre id="code"></pre>
+  </div>
+  <audio preload loop="loop" id="player" src="http://dl.stream.qqmusic.qq.com/M5000031uKNk2omqvp.mp3?vkey=5C0CEC44A47198C52BDE5C03AEADB980C30204971342E782714F2E7AEA94D1209BFD095B4DD7E11E63F85632E947C162F0BBC25D28DFE193&guid=5150825362&fromtag=1"></audio>
+  <script src="./prism.js"></script>
+  <script src="./index.js"></script>
 </body>
+
 </html>
-<script>
-    let vm = new Vue({
-        el: '#app',
-        data: () => ({
-            socket: null,
-            userName: null,
-            msgList: [],
-            textVal: '',
-            inputVal: '',
-            online: []
-        }),
-        mounted () {
-            this.createWebsocket()
-            let userName = prompt('输入你的昵称', '')
-            this.login(userName)
-        },
-        methods: {
-            createWebsocket() {
-                try {
-                    this.socket = io('http://swoole.wobu2.com', {transports: ['websocket']});
-                    this.init();
-                } catch (e) {
-                    console.log('websocket连接错误');
-                    console.log(e);
-                }
-            },
-
-            init() {
-                this.socket.on('msg', (data) => {
-                    
-                });
-                this.socket.on('siliao', (data) => {
-                    this.msgList.push({
-                        name: data.sendFrom,
-                        content: data.msg,
-                        time: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString()
-                    })
-                });
-                this.socket.on('online', (data) => {
-                    this.online = data
-                });
-            },
-
-            login(userName) {
-                let str = {"username": userName};
-                this.socket.emit('login', str);
-                this.userName = userName
-            },
-
-            sendMessage() {
-                let msg = this.textVal;
-                let sendTo = this.inputVal;
-                if (sendTo === '') {
-                    this.socket.emit('sendToAll', {"msg": msg})
-                } else {
-                    this.socket.emit('sendToUser', {"username": sendTo, "msg": msg})
-                }
-                this.msgList.push({
-                    name: this.userName,
-                    content: this.textVal,
-                    time: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString()
-                })
-                this.textVal = ""
-            }
-        }
-    })
-</script>
