@@ -1,3 +1,15 @@
+function getQueryVariable(variable)
+{
+    var query = window.location.search.substring(1);
+    var vars = query.split("&");
+    for (var i=0;i<vars.length;i++) {
+        var pair = vars[i].split("=");
+        if(pair[0] == variable){return pair[1];}
+    }
+    return(false);
+}
+const name = getQueryVariable('name')
+
 document.querySelector('button').addEventListener('click', function () {
   document.querySelector('.mask').classList.add('hide');
   var player = document.getElementById('player');
@@ -309,7 +321,7 @@ visibility: visible;
 }
 
 
-/* 圣诞快乐, 小雯同学 */
+/* 圣诞快乐, ${name ? name : '小雯同学'} */
 
 `;
 
