@@ -301,15 +301,15 @@ left: 50px;
 top: 200px;
 }
 .star.star4 {
-left: 300px;
+right: 20px;
 top: 300px;
 }
 .star.star5 {
-left: 280px;
+right: 35px;
 top: 200px;
 }
 .star.star6 {
-left: 300px;
+right: 50px;
 top: 100px;
 }
 
