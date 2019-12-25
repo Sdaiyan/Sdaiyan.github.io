@@ -10,7 +10,7 @@ function getQueryVariable(variable)
 }
 let name = getQueryVariable('name')
 if (name) name = decodeURI(name)
-
+console.log(name)
 
 document.querySelector('button').addEventListener('click', function () {
   document.querySelector('.mask').classList.add('hide');
